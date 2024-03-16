@@ -52,6 +52,7 @@ export function ListRepos({ username }: { username: string }) {
     intersectionObserver.observe(document.querySelector('#sentinel') as Element)
 
     return () => intersectionObserver.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // let repos: Repo[]
