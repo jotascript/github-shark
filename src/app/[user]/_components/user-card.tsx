@@ -12,26 +12,28 @@ type Props = {
 export function UserCard({ userData }: Props) {
   return (
     <Card className="w-full max-w-96 h-min">
-      <CardHeader className="flex flex-col gap-4 justify-center">
+      <CardHeader className="flex flex-row justify-start items-center md:flex-col md:justify-center gap-4">
         <Image
           src={userData.avatar_url}
-          width={254}
-          height={254}
+          width={256}
+          height={256}
           alt={userData.name}
-          className="rounded-full self-center"
+          className="rounded-full self-center w-16 md:w-64"
         />
-        <div className="flex flex-col gap-0">
+        <div className="flex flex-col gap-0 md:self-start">
           <div className="font-bold">{userData.name}</div>
           <div className="text-muted-foreground">{userData.login}</div>
         </div>
-        <div className="break-words">{userData.bio}</div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2">
-          <PersonIcon /> {userData.followers} Seguidores
-        </div>
-        <div className="flex items-center gap-2">
-          <PersonIcon /> {userData.following} Seguindo
+        <div className="break-words">{userData.bio}</div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <PersonIcon /> {userData.followers} Seguidores
+          </div>
+          <div className="flex items-center gap-1">
+            <PersonIcon /> {userData.following} Seguindo
+          </div>
         </div>
         {!!userData?.email && (
           <div>
