@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { api } from '@/lib/api'
 
 import { Page, PageMain } from '@/components/layout/page'
+import { FormBite } from '@/components/form-bite'
+
 import { UserCard } from './_components/user-card'
 
 export default async function Layout({
@@ -26,7 +28,10 @@ export default async function Layout({
   return (
     <Page className="h-min">
       <PageMain className="w-full flex justify-center flex-col md:flex-row">
-        <UserCard userData={userData} />
+        <div className="flex flex-col gap-6">
+          <UserCard userData={userData} />
+          <FormBite defaultUsername={username} />
+        </div>
         <div className="w-full max-w-5xl">{children}</div>
       </PageMain>
     </Page>
