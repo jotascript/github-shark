@@ -1,20 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-// import { notFound } from 'next/navigation'
+import Link from 'next/link'
+
+import { ExternalLinkIcon, StarIcon } from '@radix-ui/react-icons'
 
 import { api } from '@/lib/api'
 
 import { Repo } from '@/types/repo'
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { CodeIcon, ExternalLinkIcon, StarIcon } from '@radix-ui/react-icons'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
+
 import { ListReposSkeleton } from './list-repos-skeleton'
 
 let sentiCount = 0
-let maxSentiPage = 1
+let maxSentiPage = false
 
 export function ListRepos({ username }: { username: string }) {
   const [repos, setRepos] = useState<Repo[]>([])
@@ -23,27 +30,26 @@ export function ListRepos({ username }: { username: string }) {
   async function getRepos(page: number) {
     try {
       const data = await api(
-        `/users/${username}/repos?per_page=10&page=${page}`,
+        `/users/${username}/repos?per_page=25&page=${page}`,
       )
       const newRepos = data as unknown as Repo[]
 
       if (newRepos.length > 0) {
-        sentiCount = page + 1
-        maxSentiPage = sentiCount
+        sentiCount = page
         setRepos((prevRepos) => [...prevRepos, ...newRepos])
       } else {
-        maxSentiPage = page
+        maxSentiPage = true
       }
     } catch (error) {}
   }
 
   useEffect(() => {
     sentiCount = 0
-    maxSentiPage = 1
+    maxSentiPage = false
 
     const intersectionObserver = new IntersectionObserver((entries) => {
       if (entries.some((entry) => entry.isIntersecting)) {
-        if (sentiCount <= maxSentiPage) {
+        if (!maxSentiPage) {
           getRepos(sentiCount + 1)
         }
       }
@@ -54,16 +60,6 @@ export function ListRepos({ username }: { username: string }) {
     return () => intersectionObserver.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // let repos: Repo[]
-  // try {
-  //   const data = await api(`/users/${username}/repos?per_page=10`)
-  //   repos = data as unknown as Repo[]
-
-  //   if (repos.length <= 0) return notFound()
-  // } catch (error) {
-  //   return notFound()
-  // }
 
   return (
     <Card className="w-full">
@@ -76,29 +72,32 @@ export function ListRepos({ username }: { username: string }) {
             {repos.map((repo) => (
               <li
                 key={repo.full_name}
-                className="flex flex-col gap-2 border-t py-2"
+                className="flex flex-col gap-2 border-t py-4 mb-2"
               >
-                <div className="font-bold flex gap-1 justify-between items-center">
-                  <Link
-                    href={`/${username}/${repo.name}`}
-                    className="hover:text-muted-foreground"
-                  >
-                    {repo.name}
-                  </Link>
-                  <Link href={repo.html_url} target="_blank">
-                    <ExternalLinkIcon />
-                  </Link>
-                </div>
-                <div className="text-sm">{repo.description}</div>
-                <div className="flex items-center gap-4">
+                <div className="font-bold flex gap-4 justify-between items-center">
+                  <div className="flex gap-4 items-center">
+                    <Link
+                      href={`/${username}/${repo.name}`}
+                      className="hover:text-muted-foreground"
+                    >
+                      {repo.name}
+                    </Link>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link href={repo.html_url} target="_blank">
+                            <ExternalLinkIcon />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Ir até a página no Github</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Badge className="text-xs rounded-2xl">
                     <StarIcon className="mr-2" /> {repo.stargazers_count}
                   </Badge>
-                  {!!repo.language && (
-                    <Badge className="text-xs rounded-2xl bg-muted text-primary hover:text-secondary">
-                      <CodeIcon className="mr-2" /> {repo.language}
-                    </Badge>
-                  )}
                 </div>
               </li>
             ))}
