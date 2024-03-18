@@ -13,8 +13,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
-import { RepoReadme } from './repo-readme'
 import { ExternalGithubLink } from '@/components/external-github-link'
+
+import { RepoReadme } from './repo-readme'
 
 type Props = {
   username: string

@@ -3,20 +3,16 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-import { ExternalLinkIcon, StarIcon } from '@radix-ui/react-icons'
+import { StarIcon } from '@radix-ui/react-icons'
 
 import { api } from '@/lib/api'
 
 import { Repo } from '@/types/repo'
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+
+import { ExternalGithubLink } from '@/components/external-github-link'
 
 import { ListReposSkeleton } from './list-repos-skeleton'
 
@@ -82,18 +78,7 @@ export function ListRepos({ username }: { username: string }) {
                     >
                       {repo.name}
                     </Link>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link href={repo.html_url} target="_blank">
-                            <ExternalLinkIcon />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Ir até a página no Github</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <ExternalGithubLink repoUrl={repo.html_url} />
                   </div>
                   <Badge className="text-xs rounded-2xl">
                     <StarIcon className="mr-2" /> {repo.stargazers_count}
