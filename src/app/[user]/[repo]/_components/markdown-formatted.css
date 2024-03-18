@@ -1,0 +1,89 @@
+#readme-md h2 {
+  font-size: 18px;
+}
+
+#readme-md h1, h2, h3 {
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+#readme-md hr {
+  margin: 16px 0px;
+  border-color: hsl(var(--border));
+}
+
+#readme-md a {
+  color: #03b3fc;
+}
+
+#readme-md a:hover {
+  opacity: .8;
+}
+
+#readme-md p {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#readme-md > ul, ol {
+  margin-left: 32px;
+  margin-bottom: 16px;
+}
+
+#readme-md li {
+  margin: 8px 0px;
+}
+
+#readme-md > ul, ol > ul, ol {
+  margin-left: 16px;
+  margin-bottom: unset;
+}
+
+#readme-md blockquote {
+  border-left: 5px solid var(--border);
+  background-color: var(--muted);
+  padding: 8px 16px;
+  margin-bottom: 16px;
+}
+
+#readme-md blockquote p {
+  margin-bottom: unset;
+}
+
+#readme-md code {
+  background-color: hsl(var(--muted));
+  border-radius: 4px;
+  padding: 0px 4px;
+}
+
+#readme-md img {
+  margin-bottom: 16px;
+  max-width: 300px;
+
+}
+
+#readme-md img[alt="left"] {
+  float: left;
+  margin-right: 16px;
+  margin-bottom: unset;
+}
+
+#readme-md img[alt="right"] {
+  float: right;
+  margin-left: 16px;
+  margin-bottom: unset;
+}
+
+#readme-md pre {
+  font-size: 13px;
+  color: unset;
+  padding: 16px;
+  background-color: hsl(var(--muted));
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+#readme-md pre > code {
+  background-color: unset;
+  padding: unset;
+}
