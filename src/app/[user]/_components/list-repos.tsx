@@ -1,71 +1,63 @@
 'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-import { StarIcon } from '@radix-ui/react-icons'
-
-import { api } from '@/lib/api'
+import {
+  ArrowBottomRightIcon,
+  ArrowTopRightIcon,
+  StarIcon,
+} from '@radix-ui/react-icons'
 
 import { Repo } from '@/types/repo'
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { useFetch } from '@/hooks/use-fetch'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 import { ExternalGithubLink } from '@/components/external-github-link'
 
 import { ListReposSkeleton } from './list-repos-skeleton'
-
-let sentiCount = 0
-let maxSentiPage = false
+import { Button } from '@/components/ui/button'
+import { useQueryParams } from '@/hooks/use-query-params'
 
 export function ListRepos({ username }: { username: string }) {
-  const [repos, setRepos] = useState<Repo[]>([])
-  // const [starAsc, setStarAsc] = useState<boolean>(true) // true = ASC , false = DESC
+  const [queryParams, setQueryParams] = useQueryParams()
+  const {
+    data: repos,
+    isFetching,
+    error,
+  } = useFetch<Repo[]>(`/${username}/repos`, {
+    localApi: true,
+    watchQueryParams: ['orderByStar'],
+  })
 
-  async function getRepos(page: number) {
-    try {
-      const data = await api(
-        `/users/${username}/repos?per_page=25&page=${page}`,
-      )
-      const newRepos = data as unknown as Repo[]
-
-      if (newRepos.length > 0) {
-        sentiCount = page
-        setRepos((prevRepos) => [...prevRepos, ...newRepos])
-      } else {
-        maxSentiPage = true
-      }
-    } catch (error) {}
+  const handleRepoOrder = () => {
+    const orderByStar = queryParams.get('orderByStar')
+    if (orderByStar === 'desc') setQueryParams('orderByStar', 'asc')
+    else setQueryParams('orderByStar', 'desc')
   }
-
-  useEffect(() => {
-    sentiCount = 0
-    maxSentiPage = false
-
-    const intersectionObserver = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        if (!maxSentiPage) {
-          getRepos(sentiCount + 1)
-        }
-      }
-    })
-
-    intersectionObserver.observe(document.querySelector('#sentinel') as Element)
-
-    return () => intersectionObserver.disconnect()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-col gap-4 font-bold text-xl">
-        Repositórios
+      <CardHeader className="flex flex-row justify-between items-center">
+        <CardTitle className="font-bold text-xl">
+          Repositórios {!!repos && !isFetching && `(${repos.length})`}
+        </CardTitle>
+        <Button variant="outline" className="gap-2" onClick={handleRepoOrder}>
+          <StarIcon />
+          {queryParams.get('orderByStar') === 'desc' ? (
+            <ArrowBottomRightIcon />
+          ) : (
+            <ArrowTopRightIcon />
+          )}
+        </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {repos.length > 0 ? (
+        {isFetching ? (
+          <ListReposSkeleton />
+        ) : (
           <ul>
-            {repos.map((repo) => (
+            {repos?.map((repo) => (
               <li
                 key={repo.full_name}
                 className="flex flex-col gap-2 border-t py-4 mb-2"
@@ -86,9 +78,8 @@ export function ListRepos({ username }: { username: string }) {
                 </div>
               </li>
             ))}
+            {!!error && <li>{error}</li>}
           </ul>
-        ) : (
-          <ListReposSkeleton />
         )}
         <div id="sentinel"></div>
       </CardContent>
