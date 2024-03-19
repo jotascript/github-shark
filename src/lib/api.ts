@@ -1,7 +1,29 @@
 const URL_BASE = 'https://api.github.com'
 
-export async function api(endpoint: string, options?: RequestInit) {
-  const response = await fetch(`${URL_BASE}${endpoint}`, options)
+type StatusErro = {
+  [key: number]: { name: string; message: string }
+}
+
+const statusErrors: StatusErro = {
+  403: {
+    name: 'FORBIDDEN',
+    message: 'Limite máximo de requisições atingidas!',
+  },
+  404: {
+    name: 'NOT_FOUND',
+    message: 'Não encontrado!',
+  },
+}
+
+export async function api(
+  endpoint: string,
+  options?: RequestInit,
+  localApi?: boolean,
+) {
+  const response = await fetch(
+    `${localApi ? '/api' : URL_BASE}${endpoint}`,
+    options,
+  )
 
   if (response.ok && response.status === 200) {
     const data = (await response.json()) as Response
@@ -10,9 +32,10 @@ export async function api(endpoint: string, options?: RequestInit) {
 
   const error = new Error()
 
-  if (response.status === 404) {
-    error.name = 'NOT_FOUND'
-    error.message = 'usuario não encontrado'
+  if (statusErrors[response.status as keyof null]) {
+    const statusError = statusErrors[response.status as keyof null]
+    error.name = statusError.name
+    error.message = statusError.message
     throw error
   }
 
