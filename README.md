@@ -1,9 +1,6 @@
 # Shark
 Shark é uma ferramenta para buscar usuários do github e visualizar seus repositórios.
 
-#### Visualize a demo
-[github-shark.vercel.app](https://github-shark.vercel.app/)
-
 ## Como rodar em sua máquina
 
 Depois de realizar o clone do código, instale as dependências do projeto com o gerenciador de pacotes de sua preferência:
